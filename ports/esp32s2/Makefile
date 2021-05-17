@@ -164,7 +164,9 @@ LIBS += -lm
 endif
 
 # TinyUSB defines
-CFLAGS += -DCFG_TUSB_MCU=OPT_MCU_ESP32S2 -DCFG_TUSB_OS=OPT_OS_FREERTOS -DCFG_TUD_CDC_RX_BUFSIZE=1024 -DCFG_TUD_CDC_TX_BUFSIZE=1024 -DCFG_TUD_MSC_BUFSIZE=4096 -DCFG_TUD_MIDI_RX_BUFSIZE=128 -DCFG_TUD_MIDI_TX_BUFSIZE=128
+CFLAGS += -DCFG_TUSB_MCU=OPT_MCU_ESP32S2 -DCFG_TUSB_OS=OPT_OS_FREERTOS -DCFG_TUD_CDC_RX_BUFSIZE=1024 -DCFG_TUD_CDC_TX_BUFSIZE=1024
+CFLAGS += -DCFG_TUD_MSC_BUFSIZE=4096 -DCFG_TUD_MIDI_RX_BUFSIZE=128 -DCFG_TUD_MIDI_TX_BUFSIZE=128
+CFLAGS += -DCFG_TUD_VENDOR_RX_BUFSIZE=128 -DCFG_TUD_VENDOR_TX_BUFSIZE=128
 
 
 ######################################
@@ -180,26 +182,14 @@ SRC_C += \
 	boards/$(BOARD)/board.c \
 	boards/$(BOARD)/pins.c \
 	modules/$(CIRCUITPY_MODULE).c \
-	lib/libc/string0.c \
-	lib/mp-readline/readline.c \
-	lib/oofatfs/ff.c \
-	lib/oofatfs/option/ccsbcs.c \
-	lib/timeutils/timeutils.c \
-	lib/utils/buffer_helper.c \
-	lib/utils/context_manager_helpers.c \
-	lib/utils/interrupt_char.c \
-	lib/utils/pyexec.c \
-	lib/utils/stdout_helpers.c \
-	lib/utils/sys_stdio_mphal.c \
 	lib/netutils/netutils.c \
 	peripherals/timer.c \
 	peripherals/touch.c \
 	peripherals/pcnt.c \
 	peripherals/pins.c \
-	peripherals/rmt.c \
-	supervisor/shared/memory.c
+	peripherals/rmt.c
 
-ifneq ($(USB),FALSE)
+ifneq ($(CIRCUITPY_USB),0)
 SRC_C += lib/tinyusb/src/portable/espressif/esp32s2/dcd_esp32s2.c
 endif
 
@@ -225,6 +215,7 @@ OBJ += $(addprefix $(BUILD)/, $(SRC_SHARED_MODULE_EXPANDED:.c=.o))
 ifeq ($(INTERNAL_LIBM),1)
 OBJ += $(addprefix $(BUILD)/, $(SRC_LIBM:.c=.o))
 endif
+OBJ += $(addprefix $(BUILD)/, $(SRC_CIRCUITPY_COMMON:.c=.o))
 OBJ += $(addprefix $(BUILD)/, $(SRC_S:.S=.o))
 OBJ += $(addprefix $(BUILD)/, $(SRC_MOD:.c=.o))
 
